@@ -1,34 +1,52 @@
 import logging
 
-
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
-def get_number(prompt):
-    return float(input(prompt))
+def add(a, b):
+    logging.info(f"Dodaję {a} i {b}")
+    return a + b
 
-def main():
+def subtract(a, b):
+    logging.info(f"Odejmuję {a} i {b}")
+    return a - b
 
-    operation = int(input("Podaj działanie, posługując się odpowiednią liczbą: 1 Dodawanie, 2 Odejmowanie, 3 Mnożenie, 4 Dzielenie: "))
+def multiply(a, b):
+    logging.info(f"Mnożę {a} i {b}")
+    return a * b
 
-    num1 = get_number("Podaj składnik 1: ")
-    num2 = get_number("Podaj składnik 2: ")
+def divide(a, b):
+    logging.info(f"Dzielę {a} i {b}")
+    return a / b
+
+def perform_operation(operation, num1, num2):
     if operation == 1:
-        result = num1 + num2
-        logging.info(f"Dodaję {num1} i {num2}")
+        return add(num1, num2)
     elif operation == 2:
-        result = num1 - num2
-        logging.info(f"Odejmuję {num1} i {num2}")
+        return subtract(num1, num2)
     elif operation == 3:
-        result = num1 * num2
-        logging.info(f"Mnożę {num1} i {num2}")
+        return multiply(num1, num2)
     elif operation == 4:
-        result = num1 / num2
-        logging.info(f"Dzielę {num1} i {num2}")
+        return divide(num1, num2)
     else:
         logging.error("Niepoprawny wybór operacji.")
-        return
-    print(f"Wynik to {result}")
+        raise ValueError("Niepoprawny wybór operacji.")
+
+def get_number(Liczba):
+    while True:
+        try:
+            return float(input(Liczba))
+        except ValueError:
+            print("Podana wartość nie jest liczbą, spróbuj ponownie.")
+            
+def main():
+    try:
+        operation = int(input("Podaj działanie, posługując się odpowiednią liczbą: 1 Dodawanie, 2 Odejmowanie, 3 Mnożenie, 4 Dzielenie: "))
+        num1 = get_number("Podaj Liczbę 1: ")
+        num2 = get_number("Podaj Liczbę 2: ")
+        result = perform_operation(operation, num1, num2)
+        print(f"Wynik to {result}")
+    except ValueError as e:
+        print(f"Błąd: {e}")
 
 if __name__ == "__main__":
     main()
-    

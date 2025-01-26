@@ -211,6 +211,45 @@ from sqlite3 import Error
 #         conn.close()
 
 
+# def create_connection(db_file):
+#     conn = None
+#     try:
+#         conn = sqlite3.connect(db_file)
+#         print(f"Połączono z {db_file}, wersja SQLite: {sqlite3.version}")
+#         return conn
+#     except Error as e:
+#         print(e)
+#         return None
+
+# def update_task(conn, task_id, status, start_date, end_date):
+#     sql = '''
+#     UPDATE tasks
+#     SET status = ?,
+#         start_date = ?,
+#         end_date = ?
+#     WHERE id = ?;
+#     '''
+#     try:
+#         cur = conn.cursor()
+#         cur.execute(sql, (status, start_date, end_date, task_id))
+#         conn.commit()
+#         print(f"ok")
+#     except Error as e:
+#         print(f"Błąd podczas aktualizacji zadania: {e}")
+
+# if __name__ == "__main__":
+#     tabela1 = r"tabela1.db"
+#     conn = create_connection(tabela1)
+#     if conn:
+#         task_id = 2
+#         status = "ended"
+#         start_date = "2020-05-11 12:00:00"
+#         end_date = "2020-05-11 15:00:00"
+
+#         update_task(conn, task_id, status, start_date, end_date)
+        
+#         conn.close()
+
 def create_connection(db_file):
     conn = None
     try:
@@ -221,31 +260,37 @@ def create_connection(db_file):
         print(e)
         return None
 
-def update_task(conn, task_id, status, start_date, end_date):
+def delete_tasks_by_project(conn, project_id):
     sql = '''
-    UPDATE tasks
-    SET status = ?,
-        start_date = ?,
-        end_date = ?
+    DELETE FROM tasks
+    WHERE project_id = ?;
+    '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (project_id,))
+        conn.commit()
+        print(f"Zadania związane z projektem o ID {project_id} zostały usunięte.")
+    except Error as e:
+        print(f"Błąd podczas usuwania zadań: {e}")
+
+def delete_project(conn, project_id):
+    sql = '''
+    DELETE FROM projects
     WHERE id = ?;
     '''
     try:
         cur = conn.cursor()
-        cur.execute(sql, (status, start_date, end_date, task_id))
+        cur.execute(sql, (project_id,))
         conn.commit()
-        print(f"ok")
+        print(f"Projekt o ID {project_id} został usunięty.")
     except Error as e:
-        print(f"Błąd podczas aktualizacji zadania: {e}")
+        print(f"Błąd podczas usuwania projektu: {e}")
 
 if __name__ == "__main__":
     tabela1 = r"tabela1.db"
     conn = create_connection(tabela1)
     if conn:
-        task_id = 2
-        status = "ended"
-        start_date = "2020-05-11 12:00:00"
-        end_date = "2020-05-11 15:00:00"
-
-        update_task(conn, task_id, status, start_date, end_date)
-        
+        project_id = 3
+        delete_tasks_by_project(conn, project_id)
+        delete_project(conn, project_id)
         conn.close()

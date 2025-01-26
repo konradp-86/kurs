@@ -2,7 +2,6 @@ import sqlite3
 from sqlite3 import Error
 
 # def create_connection(db_file):
-#    """ create a tabela1 connection to a SQLite tabela1 """
 #    conn = None
 #    try:
 #        conn = sqlite3.connect(db_file)
@@ -10,9 +9,7 @@ from sqlite3 import Error
 #    except Error as e:
 #        print(e)
 #    return conn
-
 # def create_connection_in_memory():
-#    """ create a tabela1 connection to a SQLite tabela1 """
 #    conn = None
 #    try:
 #        conn = sqlite3.connect(":memory:")
@@ -20,9 +17,7 @@ from sqlite3 import Error
 #    except Error as e:
 #        print(e)
 #    return conn
-
 # def create_tables(conn):
-#     """ create tables in the provided database connection """
 #     try:
 #         cursor = conn.cursor()
 #         cursor.execute(create_projects_sql)
@@ -30,7 +25,6 @@ from sqlite3 import Error
 #         print("Tables created successfully")
 #     except Error as e:
 #         print(e)
-
 # create_projects_sql = """
 # -- projects table
 # CREATE TABLE IF NOT EXISTS projects (
@@ -56,7 +50,6 @@ from sqlite3 import Error
 # """
 
 # def create_connection(db_file):
-#     """ create a database connection to a SQLite database """
 #     conn = None
 #     try:
 #         conn = sqlite3.connect(db_file)
@@ -66,7 +59,6 @@ from sqlite3 import Error
 #     return conn
 
 # def add_project(conn, project):
-#     """ add a new project to the projects table """
 #     sql = ''' INSERT INTO projects(nazwa, start_date, end_date)
 #               VALUES(?, ?, ?) '''
 #     cur = conn.cursor()
@@ -74,7 +66,6 @@ from sqlite3 import Error
 #     return cur.lastrowid
 
 # def add_task(conn, task):
-#     """ add a new task to the tasks table """
 #     sql = ''' INSERT INTO tasks(project_id, nazwa, opis, status, start_date, end_date)
 #               VALUES(?, ?, ?, ?, ?, ?) '''
 #     cur = conn.cursor()
@@ -94,8 +85,28 @@ from sqlite3 import Error
 #         conn.commit()
 #         conn.close()
 
+# def create_connection(db_file):
+#     conn = None
+#     try:
+#         conn = sqlite3.connect(db_file)
+#         print(f"Połączono z {db_file}, wersja SQLite: {sqlite3.version}")
+#         return conn
+#     except Error as e:
+#         print(e)
+#         return None
+
+# def insert_project(conn, project):
+#     sql = '''INSERT INTO projects(nazwa, start_date, end_date)
+#              VALUES(?, ?, ?)'''
+#     try:
+#         cur = conn.cursor()
+#         cur.execute(sql, project)
+#         conn.commit()
+#         print("Nowy projekt został dodany do tabeli 'projects'")
+#     except Error as e:
+#         print(f"Błąd podczas wstawiania danych: {e}")
+
 def create_connection(db_file):
-    """Nawiązuje połączenie z bazą danych SQLite"""
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -106,7 +117,6 @@ def create_connection(db_file):
         return None
 
 def insert_project(conn, project):
-    """Wstawia nowy projekt do tabeli projects"""
     sql = '''INSERT INTO projects(nazwa, start_date, end_date)
              VALUES(?, ?, ?)'''
     try:
@@ -114,14 +124,41 @@ def insert_project(conn, project):
         cur.execute(sql, project)
         conn.commit()
         print("Nowy projekt został dodany do tabeli 'projects'")
+        return cur.lastrowid
     except Error as e:
-        print(f"Błąd podczas wstawiania danych: {e}")
+        print(f"Błąd podczas wstawiania projektu: {e}")
 
-if __name__ == '__main__':
-    database = r"tabela1.db"
-    conn = create_connection(database)
+def add_task(conn, task):
+    sql = '''INSERT INTO tasks(project_id, nazwa, opis, status, start_date, end_date)
+             VALUES(?, ?, ?, ?, ?, ?)'''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, task)
+        conn.commit()
+        print("Nowe zadanie zostało dodane do tabeli 'tasks'")
+        return cur.lastrowid
+    except Error as e:
+        print(f"Błąd podczas wstawiania zadania: {e}")
+
+if __name__ == "__main__":
+    tabela1 = r"tabela1.db"
+    conn = create_connection(tabela1)
     if conn:
-        # Dane nowego projektu do wstawienia
-        project = ("Zrób zadania 2", "2020-05-08 00:00:00", "2020-05-10 00:00:00")
-        insert_project(conn, project)
+        project = ("Powtórka z angielskiego", "2020-05-11 00:00:00", "2020-05-13 00:00:00")
+        pr_id = insert_project(conn, project)
+
+        task = (
+            pr_id,
+            "Czasowniki regularne",
+            "Zapamiętaj czasowniki ze strony 30",
+            "started",
+            "2020-05-11 12:00:00",
+            "2020-05-11 15:00:00"
+        )
+
+        task_id = add_task(conn, task)
+
+        print(f"Projekt ID: {pr_id}, Zadanie ID: {task_id}")
+        new_var = conn.commit()
+        new_var
         conn.close()

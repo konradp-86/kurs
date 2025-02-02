@@ -41,11 +41,17 @@ def create_contact(contact_type):
     else:
         raise ValueError("Niepoprawny typ wizytówki")
 
+def create_contacts(contact_type, quantity):
+    contacts = []
+    for _ in range(quantity):
+        contacts.append(create_contact(contact_type))
+    return contacts
+
 if __name__ == "__main__":
-    contact_type = 'business'  
-    contact = create_contact(contact_type)
+    contact_type = 'business'
+    contacts = create_contacts(contact_type, 5)
 
-    print(contact)
-    print(contact.contact())
-    print(f"Długość imienia i nazwiska: {contact.label_length}")
-
+    for contact in contacts:
+        print(contact)
+        print(contact.contact())
+        print(f"Długość imienia i nazwiska: {contact.label_length}")
